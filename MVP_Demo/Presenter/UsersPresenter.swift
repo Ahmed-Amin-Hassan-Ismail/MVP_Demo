@@ -21,31 +21,30 @@ class UsersPresenter {
     
     private weak var delegate: UsersPresenterDelegate?
     
+    
     public func setViewDelegate(delegate: PresenterDelegate ) {
         self.delegate = delegate
     }
-}
-
-
-//MARK: - Private Methods
-extension UsersPresenter {
     
-    private func getUsers() {
-        guard let url = URL(string: "https://jsonplaceholder.typicode.com/users") else { return }
-        
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            guard let data = data, error == nil else { return }
+    public func getUsers() {
+       guard let url = URL(string: "https://jsonplaceholder.typicode.com/users") else { return }
+       
+       let task = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+           guard let data = data, error == nil else { return }
 
-            do {
-                let users = try JSONDecoder().decode([Users].self, from: data)
-                self?.delegate?.presentUsers(users: users)
-                
-            } catch {
-                print("Error Location", error.localizedDescription)
-            }
-        }
-        task.resume()
+           do {
+               let users = try JSONDecoder().decode([Users].self, from: data)
+               self?.delegate?.presentUsers(users: users)
+               
+           } catch {
+               print("Error Location", error.localizedDescription)
+           }
+       }
+       task.resume()
+   }
+    
+    public func didTapUsers(user: Users) {
+        delegate?.presentAlert(title: user.name, message: "\(user.name) has an email of \(user.email) & username of \(user.username)")
     }
-    
-    
 }
+
